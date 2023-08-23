@@ -56,23 +56,7 @@
   when: proxmox_cloudbuntu_ci_pass is defined
 
 - name: Set the cloudinit ssh keys
-  when: proxmox_cloudbuntu_ci_keys is defined
-  block:
-    - name: Create ssh keys file
-      ansible.builtin.lineinfile:
-        path: "/tmp/{{ proxmox_cloudbuntu_vmid }}-ssh-keys"
-        line: "{{ item }}"
-        create: true
-        mode: 0777
-      loop: "{{ proxmox_cloudbuntu_ci_keys }}"
-
-    - name: Set the VM ssh keys
-      ansible.builtin.command: "qm set {{ proxmox_cloudbuntu_vmid }} --sshkeys /tmp/{{ proxmox_cloudbuntu_vmid }}-ssh-keys"
-
-    - name: Remove the ssh keys file
-      ansible.builtin.file:
-        path: "/tmp/{{ proxmox_cloudbuntu_vmid }}-ssh-keys"
-        state: absent
+  ansible.builtin.command: "qm set {{ proxmox_cloudbuntu_vmid }} --sshkeys  ~/.ssh/authorized_keys"
 
 - name: Make sure qemu-guest-agent gets installed on the VM
   ansible.builtin.command: "qm set {{ proxmox_cloudbuntu_vmid }} --cicustom 'vendor={{ proxmox_cloudbuntu_snippets_device }}:snippets/qemu-ga.yml'"
